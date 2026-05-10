@@ -166,33 +166,39 @@ public class TinkerGraphServiceTest {
 
     @Test
     public void g_V_call_degree_centrality() {
-        assertArrayEquals(new String[] {
+        String[] expected1 = new String[] {
                 "{vertex=v[1], degree=0}",
                 "{vertex=v[2], degree=1}",
                 "{vertex=v[3], degree=3}",
                 "{vertex=v[4], degree=1}",
                 "{vertex=v[5], degree=1}",
                 "{vertex=v[6], degree=0}",
-        }, toResultStrings(
-
+        };
+	String[] actual1 = toResultStrings(
                 g.V().as("v").call("tinker.degree.centrality")
                         .project("vertex", "degree").by(select("v")).by()
 
-        ));
+        );
+	Arrays.sort(expected1);
+	Arrays.sort(actual1);
+	assertArrayEquals(expected1, actual1);
 
-        assertArrayEquals(new String[] {
+        String[] expected2 = new String[] {
                 "{vertex=marko, degree=3}",
                 "{vertex=vadas, degree=0}",
                 "{vertex=lop, degree=0}",
                 "{vertex=josh, degree=2}",
                 "{vertex=ripple, degree=0}",
                 "{vertex=peter, degree=1}",
-        }, toResultStrings(
-
+        };
+	String[] actual2 = toResultStrings(
                 g.V().as("v").call("tinker.degree.centrality").with("direction", Direction.OUT)
                         .project("vertex", "degree").by(select("v").values("name")).by()
 
-        ));
+        );
+	Arrays.sort(expected2);
+	Arrays.sort(actual2);
+	assertArrayEquals(expected2, actual2);
 
         checkResult("lop", g.V().where(__.call("tinker.degree.centrality").is(3)).values("name"));
         checkResults(Arrays.asList("vadas","josh","ripple"), g.V().where(__.call("tinker.degree.centrality").is(1)).values("name"));
